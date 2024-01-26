@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE configuration PUBLIC "-//mybatis.org//DTD Config
+3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-config.dtd">
+
+<configuration>
+	<typeAliases>
+		<typeAlias alias="Member" 			type="com.example.yongDiary.model.Member"/>
+		<typeAlias alias="Diary" 			type="com.example.yongDiary.model.Diary"/>
+		<typeAlias alias="Memo" 			type="com.example.yongDiary.model.Memo"/>
+	</typeAliases>
+</configuration>

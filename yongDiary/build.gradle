@@ -26,14 +26,26 @@ dependencies {
 	implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
 	implementation 'org.springframework.boot:spring-boot-starter-mail'
 	implementation 'org.springframework.boot:spring-boot-starter-security'
-	implementation 'org.springframework.boot:spring-boot-starter-thymeleaf'
+	//implementation 'org.springframework.boot:spring-boot-starter-thymeleaf'
 	implementation 'org.springframework.boot:spring-boot-starter-validation'
 	implementation 'org.springframework.boot:spring-boot-starter-web'
 	implementation 'org.springframework.boot:spring-boot-starter-websocket'
 	implementation 'org.mybatis.spring.boot:mybatis-spring-boot-starter:2.3.1'
-	implementation 'org.thymeleaf.extras:thymeleaf-extras-springsecurity6'
+	
+	//추가		-- jsp
+	implementation 'com.googlecode.json-simple:json-simple:1.1.1'
+    implementation 'org.apache.tomcat.embed:tomcat-embed-jasper'
 	implementation 'javax.servlet:jstl'
-    implementation 'com.googlecode.json-simple:json-simple:1.1.1'
+	
+	// tiles 관련 
+	implementation 'org.apache.tiles:tiles-jsp:3.0.8'
+    implementation 'org.apache.tiles:tiles-core:3.0.8'
+    implementation 'org.apache.tiles:tiles-servlet:3.0.8'
+    implementation 'org.apache.tiles:tiles-api:3.0.8'
+	//implementation group: 'org.apache.tiles', name: 'tiles-jsp', version: '3.0.8'
+
+	
+	//implementation 'org.thymeleaf.extras:thymeleaf-extras-springsecurity6'
     
 	compileOnly 'org.projectlombok:lombok'
 	runtimeOnly 'com.oracle.database.jdbc:ojdbc8'
@@ -41,6 +53,8 @@ dependencies {
 	testImplementation 'org.springframework.boot:spring-boot-starter-test'
 	testImplementation 'org.mybatis.spring.boot:mybatis-spring-boot-starter-test:2.3.1'
 	testImplementation 'org.springframework.security:spring-security-test'
+	
+
 }
 
 tasks.named('test') {

@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE tiles-definitions PUBLIC "-//Apache Software Foundation//DTD Tiles Configuration 3.0//EN" "http://tiles.apache.org/dtds/tiles-config_3_0.dtd">
+
+<tiles-definitions>
+    <!-- 템플릿 설정 -->
+    <definition name="mainTemplate" template="/WEB-INF/layout/layout-basic.jsp">
+        <put-attribute name="header" value="/WEB-INF/common/header.jsp"/>
+        <put-attribute name="footer" value="/WEB-INF/common/footer.jsp"/>
+        <put-attribute name="body" value=""/>
+        <!-- name > top, content, footer 등의 name 설정 -->
+        <!-- value > 영역에 연결될 실제 view 파일 -->
+    </definition>
+
+    <!-- view 설정 -->
+    <definition name="*/*" extends="mainTemplate">
+        <put-attribute name="body" value="/WEB-INF/views/{1}/{2}.jsp" />
+    </definition>
+    <!-- name > controller에서 response할 뷰의 이름, extends > 위에서 정의한 템플릿 이름 넣어줌 -->
+    <!-- index라는 이름으로 view 실행하면 연결한 구조대로 실행 -->
+</tiles-definitions>

@@ -55,7 +55,7 @@ public class SecurityConfig {
 		http.sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS);
 		
 		// [STEP 6] Spring Security JWT Filter Load
-		//http.addFilterBefore(jwtAuthorizationFilter(), BasicAuthenticationFilter.class);
+		http.addFilterBefore(jwtAuthorizationFilter(), BasicAuthenticationFilter.class);
 		
 		// [STEP 7] 최종 구성한 값을 사용함
 		return http.build();
@@ -85,9 +85,9 @@ public class SecurityConfig {
     @Bean
     public CustomAuthenticationFilter customAuthenticationFilter() {
     	CustomAuthenticationFilter customAuthenticationFilter = new CustomAuthenticationFilter(authenticationManager());
-    	customAuthenticationFilter.setFilterProcessesUrl("/page/login");
+    	customAuthenticationFilter.setFilterProcessesUrl("/page/loginPage");
         customAuthenticationFilter.setAuthenticationSuccessHandler(customLoginSuccessHandler());    // '인증' 성공 시 해당 핸들러로 처리를 전가한다.
-        customAuthenticationFilter.setAuthenticationFailureHandler(customAuthFailureHandler());    // '인증' 실패 시 해당 핸들러로 처리를 전가한다.
+        customAuthenticationFilter.setAuthenticationFailureHandler(customLoginFailureHandler());    // '인증' 실패 시 해당 핸들러로 처리를 전가한다.
     	return customAuthenticationFilter;
     }
     
@@ -99,15 +99,23 @@ public class SecurityConfig {
 	public BCryptPasswordEncoder encodePwd() {
 		return new BCryptPasswordEncoder();
 	}
-	
-	
+	/**
+     * 7. Spring Security 기반의 사용자의 정보가 맞을 경우 수행이 되며 결과값을 리턴해주는 Handler
+     *
+     * @return CustomLoginSuccessHandler
+     */
 	@Bean
 	public CustomAuthSuccessHandler customLoginSuccessHandler() {
 		return new CustomAuthSuccessHandler();	
 	}
 	
+	/**
+     * 8. Spring Security 기반의 사용자의 정보가 맞지 않을 경우 수행이 되며 결과값을 리턴해주는 Handler
+     *
+     * @return CustomAuthFailureHandler
+     */
 	@Bean 
-	public CustomAuthFailureHandler customAuthFailureHandler() {
+	public CustomAuthFailureHandler customLoginFailureHandler() {
 		return new CustomAuthFailureHandler();
 	}
 	
@@ -116,10 +124,10 @@ public class SecurityConfig {
      *
      * @return JwtAuthorizationFilter
      */
-//    @Bean
-//    public JwtAuthorizationFilter jwtAuthorizationFilter() {
-//        return new JwtAuthorizationFilter();
-//    }
+    @Bean
+    public JwtAuthorizationFilter jwtAuthorizationFilter() {
+        return new JwtAuthorizationFilter();
+    }
 	
 	
 }

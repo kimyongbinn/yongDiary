@@ -32,6 +32,10 @@ dependencies {
 	implementation 'org.springframework.boot:spring-boot-starter-websocket'
 	implementation 'org.mybatis.spring.boot:mybatis-spring-boot-starter:2.3.1'
 	
+	//jwt 토큰 
+	implementation "io.jsonwebtoken:jjwt:0.9.1";
+	
+	
 	//추가		-- jsp
 	implementation 'com.googlecode.json-simple:json-simple:1.1.1'
     implementation 'org.apache.tomcat.embed:tomcat-embed-jasper'

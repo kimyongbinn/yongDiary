@@ -57,7 +57,7 @@ public class CustomAuthenticationProvider implements AuthenticationProvider {
 	@Override
 	public boolean supports(Class<?> authentication) {
 		// TODO Auto-generated method stub
-		return false;
+		return authentication.equals(UsernamePasswordAuthenticationToken.class);
 	}
 
 }

@@ -37,7 +37,7 @@ public class MemDetailsServiceImpl implements UserDetailsService {
 					.map(u -> new MemDetails(u, Collections.singleton(new SimpleGrantedAuthority(u.getMemId()))))
 					.orElseThrow(() -> new AuthenticationServiceException(memId));
 		}	
-		// 비밀번호가 맞지 않을경우 
+		// 비밀번호가 맞지 않을경우 	
 		else {
 			return memberService.userLogin(member)
 					.map(u -> new MemDetails(u, Collections.singleton(new SimpleGrantedAuthority(memId))))

@@ -1,9 +1,12 @@
 package com.example.yongDiary.model;
 
+import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 @Data
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class Member {
 
 	private int		memNum;		// 회원번호

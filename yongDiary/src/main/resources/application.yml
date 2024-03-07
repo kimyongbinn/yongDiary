@@ -46,7 +46,7 @@ spring:
 #Mybatis
 mybatis:           #classpath : resources를 의미
   config-location: classpath:configuration.xml
-  mapper-locations: classpath:mapper/**/*.xml
+  mapper-locations: classpath:mappers/**/*.xml
   
 logging.level:
   org.hibernate.SQL: debug   # logger를 통해 하이버네이트 실행 SQL

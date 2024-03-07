@@ -23,13 +23,9 @@ public class ybController {
 	
 	
 	@RequestMapping("/")
-	public ModelAndView main(ModelAndView mv, Member member) throws Exception {
+	public ModelAndView main(ModelAndView mv) {
 		System.out.println("YbController main start..");
-//		System.out.println("login after member id -> " + member.getMemId());
-		if(member != null) {
-			System.out.println("login after member id -> " + member.getMemId());
-		}
-//		System.out.println("login after member id -> " + member.getMemId());
+		
 		mv.setViewName("main/main");
 		return mv;
 	}
@@ -39,20 +35,30 @@ public class ybController {
 	public ModelAndView loginPage(ModelAndView mv, Member member)throws Exception {
 		System.out.println("YbController loginPage start..");
 		
-		
 		mv.setViewName("page/loginPage");
 		return mv;
 	}
-	// 로그인
-	@RequestMapping("/user/login.do")
-	public String login(ModelAndView mv, Member member, Model model) throws Exception {
-		System.out.println("YbController login.do Start...");
+	
+	// 회원가입
+	@RequestMapping("/join")
+	public ModelAndView joinForm(ModelAndView mv) {
+		System.out.println("YbController loginPage start..");
 		
-//		Optional<Member> userLogin = ms.userLogin(member);
-		
-		model.addAttribute(member);
-		return "redirect:/";
+		mv.setViewName("page/joinForm");
+		return mv;
 	}
+	
+	
+	
+	// 지도 페이지 이동
+	@RequestMapping("/mapView") 
+	public ModelAndView mapView(ModelAndView mv, Member member)throws Exception {
+		System.out.println("YbController loginPage start..");
+		
+		mv.setViewName("page/mapView");
+		return mv;
+	}
+	
 	
 	
 }

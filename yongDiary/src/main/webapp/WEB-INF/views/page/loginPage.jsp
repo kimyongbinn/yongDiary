@@ -6,7 +6,7 @@
 <div class="contact-text py-5 wow fadeIn" data-wow-delay="0.5s" style="margin: auto;width: 50%; ">
     <div class="p-lg-5 ps-lg-0">
             <h3 class="display-6 mb-4">로그인</h3>
-        <form action="/user/login.do">
+        <form action="/login" method="post">
             <div class="row g-3">
                 <div class="col-12">
                     <div class="form-floating">
@@ -22,6 +22,10 @@
                 </div>
                 <div class="col-12">
                     <button class="btn btn-primary w-100 py-3" type="submit">로그인</button>
+                </div>
+                <div style="text-align: center;">
+                	<span style="margin-right: 30px;"><a href="/join">회원가입</a></span>
+                	<span><a href="">계정찾기</a></span>
                 </div>
             </div>
         </form>

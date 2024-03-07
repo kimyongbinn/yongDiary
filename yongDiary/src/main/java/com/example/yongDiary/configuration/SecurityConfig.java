@@ -1,133 +1,124 @@
 package com.example.yongDiary.configuration;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.security.servlet.PathRequest;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.ProviderManager;
+import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
+import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityCustomizer;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.access.AccessDeniedHandler;
 import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
+import org.springframework.security.web.authentication.SimpleUrlAuthenticationFailureHandler;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.security.web.authentication.www.BasicAuthenticationFilter;
 
-import com.example.yongDiary.configuration.filter.CustomAuthenticationFilter;
-import com.example.yongDiary.handler.CustomAuthFailureHandler;
-import com.example.yongDiary.handler.CustomAuthSuccessHandler;
-import com.example.yongDiary.handler.CustomAuthenticationProvider;
-
+import com.example.yongDiary.configuration.filter.CustomAccessDeniedHandler;
+import com.example.yongDiary.configuration.filter.CustomAuthenticationSuccessHandler;
+import com.example.yongDiary.service.MemberService;
+@EnableWebSecurity
 @Configuration
 public class SecurityConfig {
 	
-	/* 1. 정적 자원(Resource)에 대해서 인증된 사용자가 정적 자원의 접근에 대해 
-	'인가'에 대한 설정을 담당하는 메소드
-	*/
+	//접근 권한 없는 경우 예외 처리 할 클래스 
+    @Bean
+    public AccessDeniedHandler accessDeniedHandler() {
+    	//아래는 AccessDeniedHandler 상속받아서 직접 생성
+        return new CustomAccessDeniedHandler();
+    }
+	
+	// 해쉬 암호화 방식을 사용하겠다. -> password 암호화
+	//@Bean 사용하면 해당 메서드의 리턴되는 오브젝트를 IoC로 등록해줌
 	@Bean
-	public WebSecurityCustomizer websecurityCustomizer() {
-		// 정적 자원에 대해서 Security를 적용하지 않음으로 설정
-		return (web) -> web.ignoring().requestMatchers(PathRequest.toStaticResources().atCommonLocations());
-	}
-	
-	/*
-	 2. HTTP에 대해서 '인증'과 '인가'를 담당하는 메소드이며 필터를 통해 
-	 인증 방식과 인증절차에 대해서 등록하며 설정을 담당하는 메소드
-	*/
-	@Bean
-	protected SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
-		
-		// [STEP 1] 서버에 인증정보를 저장하지 않기에 csrf 사용 X 
-		//csrf() : 웹 사이트 취약점 공격의 하나/.disable
-		http.csrf().disable();
-		
-		// [STEP 2] form 기반의 로그인에 대해 비 활성화하며 커스텀으로 구성한 필터를 사용
-		http.formLogin().disable();
-		
-		// [STEP 3] 토큰을 활용하는 경우 모든 요청에 대해 '인가'에 대해서 사용
-		http.authorizeHttpRequests((auth) -> auth.anyRequest().permitAll());
-		
-		// [STEP 4] Spring Security Custom FIlter LOAD - Form '인증'에 대해서 사용
-		http.addFilterBefore(customAuthenticationFilter(), UsernamePasswordAuthenticationFilter.class);
-		
-		// [STEP 5] Session 기반의 인증을 사용하지 않고 추후 JWT를 이용해 인증
-		http.sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS);
-		
-		// [STEP 6] Spring Security JWT Filter Load
-		http.addFilterBefore(jwtAuthorizationFilter(), BasicAuthenticationFilter.class);
-		
-		// [STEP 7] 최종 구성한 값을 사용함
-		return http.build();
-	}
-	
-	// 3. authenticate의 인증 메소드를 제공하는 매니저로 'Provider'의 인터페이스를 의미
-	// 과정: CustomAuthenticationFilter → AuthenticationManager(interface) → CustomAuthenticationProvider(implements)
-    @Bean
-    public AuthenticationManager authenticationManager() {
-    	return new ProviderManager(customAuthenticationProvider());
-    }
-	
-    // 4. 인증 제공자로 사용자의 이름과 비밀번호 요구
-    // - 과정: CustomAuthenticationFilter → AuthenticationManager(interface) → CustomAuthenticationProvider(implements)
-    @Bean
-    public CustomAuthenticationProvider customAuthenticationProvider() {
-    	return new CustomAuthenticationProvider(bCryptPasswordEncoder());
-    }
-    
-    // 5. 비밀번호를 암호화하기 위한 BCrypt 인코딩을 통하여 비밀번호에 대한 암호화 수행
-    @Bean
-    public BCryptPasswordEncoder bCryptPasswordEncoder() {
-    	return new BCryptPasswordEncoder();
-    }
-    
-    // 6. 커스텀을 수행한 '인증' 필터로 접근 URL, 데이터 전달방식(form) 등 인증과정 및 인증 후 처리에 대한 설정 구성하는 메소드
-    @Bean
-    public CustomAuthenticationFilter customAuthenticationFilter() {
-    	CustomAuthenticationFilter customAuthenticationFilter = new CustomAuthenticationFilter(authenticationManager());
-    	customAuthenticationFilter.setFilterProcessesUrl("/page/loginPage");
-        customAuthenticationFilter.setAuthenticationSuccessHandler(customLoginSuccessHandler());    // '인증' 성공 시 해당 핸들러로 처리를 전가한다.
-        customAuthenticationFilter.setAuthenticationFailureHandler(customLoginFailureHandler());    // '인증' 실패 시 해당 핸들러로 처리를 전가한다.
-    	return customAuthenticationFilter;
-    }
-    
-    
-	//암호화 제외 security 사용 X
-	
-	//패스워드를 암호화하는 모듈
-	@Bean	//수동 설정일 때만 Bean 사용
 	public BCryptPasswordEncoder encodePwd() {
 		return new BCryptPasswordEncoder();
 	}
-	/**
-     * 7. Spring Security 기반의 사용자의 정보가 맞을 경우 수행이 되며 결과값을 리턴해주는 Handler
-     *
-     * @return CustomLoginSuccessHandler
-     */
-	@Bean
-	public CustomAuthSuccessHandler customLoginSuccessHandler() {
-		return new CustomAuthSuccessHandler();	
-	}
 	
-	/**
-     * 8. Spring Security 기반의 사용자의 정보가 맞지 않을 경우 수행이 되며 결과값을 리턴해주는 Handler
-     *
-     * @return CustomAuthFailureHandler
-     */
-	@Bean 
-	public CustomAuthFailureHandler customLoginFailureHandler() {
-		return new CustomAuthFailureHandler();
-	}
-	
-	 /**
-     * 9. JWT 토큰을 통하여서 사용자를 인증합니다.
-     *
-     * @return JwtAuthorizationFilter
-     */
+	//로그인 성공 후 학습자인 경우 그룹에 가입 여부에 따라 그룹가입신청 페이지로 이동하도록 핸들러 만들고
+	//학습 그룹 가입여부 확인하기 위해 memberService를 파라미터로 주입해줌 그래야 @RequiredArgsConstructor로 생성자 생성가능 안그러면 에러남 
+	@Autowired
+    private MemberService memberService;
     @Bean
-    public JwtAuthorizationFilter jwtAuthorizationFilter() {
-        return new JwtAuthorizationFilter();
+    public AuthenticationSuccessHandler successHandler() {
+        return new CustomAuthenticationSuccessHandler(memberService);
     }
+    
+	//세션 관리 및 인증 실패 핸들링
+	@Bean
+	public SimpleUrlAuthenticationFailureHandler authenticationFailureHandler() {
+		//SimpleUrlAuthenticationFailureHandler 객체를 생성하여 반환
+		
+		SimpleUrlAuthenticationFailureHandler failureHandler = new SimpleUrlAuthenticationFailureHandler();
+	    failureHandler.setUseForward(true);
+	    failureHandler.setDefaultFailureUrl("/user/loginPage?error=true");
+	    
+	    return failureHandler;
+	}
+	 
+	// 인증요청으로 들어온 토큰이 올바른 유저인지 인증 수행하므로 빈 등록 필수!
+	@Bean
+	AuthenticationManager authenticationManager(
+		AuthenticationConfiguration authenticationConfiguration
+	) throws Exception {
+		return authenticationConfiguration.getAuthenticationManager();
+	}
+
 	
-	
+//	WebSecurityConfigurerAdapter는  Deprecated 되었으므로 사용하지 않고 아래와 같이 SecurityFilterChain을 Bean으로 등록하여 사용 
+	@Bean
+	protected SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
+		http.csrf().disable();
+		
+		//접근 권한 없는 경우 예외처리할 핸들러 필터체인에 등록
+		http.exceptionHandling().accessDeniedHandler(accessDeniedHandler());
+		
+		http.authorizeHttpRequests((requests) -> requests
+				//구독서비스
+//				.antMatchers("/mapView").hasAnyRole("ADMIN", "USER")
+				.anyRequest().permitAll()
+			);		
+		
+		http.formLogin((form) -> form
+				.loginPage("/user/loginPage")
+				.permitAll()
+				.usernameParameter("memId")		// login에 필요한 id값 설정 (default는 username)
+                .passwordParameter("memPw")	// login에 필요한 password 값  (default password)
+                .loginProcessingUrl("/login")	// login주소가 호출 되면 시큐리티가 낚아채서 대신 로그인 진행해줌
+                .failureUrl("/user/loginPage?error=true")
+                .successHandler(successHandler())
+//				.defaultSuccessUrl("/")			// 로그인 성공시 이동할 URL (메이페이지로 이동) 이거 때문에 successHandler실행 안됨 
+			);
+		
+		// Logout 설정.
+		http.logout((logout) -> logout
+				.permitAll()
+				.logoutSuccessUrl("/login")
+				.invalidateHttpSession(true) //세션 무효화 -현재 세션을 끝내고 새로운 세션을 시작
+			);	
+		//세션을 날렸는데도 헤더에서 계속 로그아웃만 표시 되어서 바꿈 
+		//근데도 문제 지속되어서 헤더에서 <%= SecurityContextHolder.getContext().getAuthentication() %>
+		//에서 지금으로 바꿈
+//				.logoutSuccessHandler((request, response, authentication) -> {
+//			        SecurityContextHolder.clearContext(); // 세션을 무효화하고 SecurityContextHolder를 비웁니다.
+//			        response.sendRedirect("/info/loginForm");
+//				})
+		
+		// Authentication Provider 등록. -> CustomAuthenticationProvider에서 실제 로그인 처리
+//		http.authenticationProvider(authProvider);
+		
+		 // 세션 설정 추가
+        http.sessionManagement()							//세션 관리 설정을 시작
+            .maximumSessions(2)								//동시에 허용되는 최대 세션 수
+            .expiredUrl("/info/loginForm?expired=true")		//세션이 만료된 경우 리디렉션할 URL(로그인 페이지로 이동)
+            .and()
+            .sessionAuthenticationFailureHandler(authenticationFailureHandler()); //세션에서의 인증 실패 시 처리를 담당하는 핸들러를
+
+		return http.build();
+	}
 }

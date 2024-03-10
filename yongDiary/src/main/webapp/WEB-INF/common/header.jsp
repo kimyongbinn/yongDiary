@@ -2,7 +2,7 @@
     pageEncoding="UTF-8"%>
 <!DOCTYPE html>
 <html lang="en">
-
+<script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
 <head>
     <meta charset="utf-8">
     <title>YongDiary</title>
@@ -90,7 +90,7 @@
                 <div class="nav-item dropdown">
                     <a href="#" class="nav-link dropdown-toggle" data-bs-toggle="dropdown">Menu</a>
                     <div class="dropdown-menu fade-up m-0">
-                        <a href="/mapView" class="dropdown-item">Map</a>
+                        <a href="/map/mapSearch" class="dropdown-item">Map</a>
                         <a href="quote.html" class="dropdown-item">Diary</a>
 <!--                         <a href="team.html" class="dropdown-item">Our Team</a> -->
 <!--                         <a href="testimonial.html" class="dropdown-item">Testimonial</a> -->

@@ -1,5 +1,6 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8"
     pageEncoding="UTF-8"%>
+
 <!DOCTYPE html>
 <html lang="en">
 <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
@@ -9,7 +10,9 @@
     <meta content="width=device-width, initial-scale=1.0" name="viewport">
     <meta content="" name="keywords">
     <meta content="" name="description">
-
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
+<%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
+<%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
     <!-- Favicon -->
     <link href="assets/img/favicon.ico" rel="icon">
 
@@ -65,8 +68,16 @@
                     <small>+012 345 6789</small>	
                 </div>
                 <div class="h-100 d-inline-flex align-items-center">
-                    <a class="btn btn-sm-square bg-white text-primary me-1" href="/user/loginPage"><i class="bi bi-door-open"></i></a>
-                    <a class="btn btn-sm-square bg-white text-primary me-1" href=""><i class="bi bi-door-closed"></i></a>
+                <c:set var="authentication" value="${pageContext.request.userPrincipal}" />
+           	 	  <c:choose>
+	           	 	  <c:when test="${empty authentication or not authentication.authenticated}">
+                    	  <a class="btn btn-sm-square bg-white text-primary me-1" href="/user/loginPage"><i class="bi bi-door-open"></i></a>
+                   	  </c:when>
+                   	  <c:otherwise>
+                   	      <h6 class="mb-0" style="margin-right: 15px;">${pageContext.request.userPrincipal.name}</h6>
+                    	  <a class="btn btn-sm-square bg-white text-primary me-1" href="/logout"><i class="bi bi-door-closed"></i></a>
+                      </c:otherwise>
+                   </c:choose>
 <!--                     <a class="btn btn-sm-square bg-white text-primary me-1" href=""><i class="fab fa-linkedin-in"></i></a> -->
 <!--                     <a class="btn btn-sm-square bg-white text-primary me-0" href=""><i class="fab fa-instagram"></i></a> -->
                 </div>
@@ -103,3 +114,4 @@
         </div>
     </nav>
     <!-- Navbar End -->
+<div class="row g-0 justify-content-center">

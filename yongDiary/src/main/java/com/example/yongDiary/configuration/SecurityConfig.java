@@ -98,7 +98,7 @@ public class SecurityConfig {
 		// Logout 설정.
 		http.logout((logout) -> logout
 				.permitAll()
-				.logoutSuccessUrl("/login")
+				.logoutSuccessUrl("/user/loginPage")
 				.invalidateHttpSession(true) //세션 무효화 -현재 세션을 끝내고 새로운 세션을 시작
 			);	
 		//세션을 날렸는데도 헤더에서 계속 로그아웃만 표시 되어서 바꿈 

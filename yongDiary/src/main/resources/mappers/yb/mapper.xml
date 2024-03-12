@@ -14,7 +14,35 @@
 			FROM 	member
 			WHERE   memId = #{memId}
 		</select>
-	
-	
+		
+		<select id="keywordTotal" parameterType="String" resultType="int">
+			SELECT count(*)
+			FROM   SearchList
+			WHERE  keyword = #{keyword}
+		</select>
+		
+		<insert id="searchInsert" parameterType="map">
+			INSERT INTO SearchList values(#{memNum}, #{keyword}, sysdate, 0)
+		</insert>
+		
+	<update id="searchUpdate" parameterType="String">
+	    UPDATE SearchList
+	    SET searchDate = sysdate,
+	        delState = CASE WHEN delState = 1 THEN 0 ELSE delState END
+	    WHERE keyword = #{keyword}
+	</update>
+		
+		<select id="searchList" resultType="SearchList">
+			SELECT *
+			FROM SearchList
+			WHERE delState = 0
+			Order By searchDate desc
+		</select>
+		
+		<update id="deleteSearch" parameterType="String">
+			UPDATE  SearchList
+			SET    delState = 1
+			WHERE  keyword = #{keyword}
+		</update>
 	
 	</mapper>

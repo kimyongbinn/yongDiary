@@ -1,10 +1,13 @@
 package com.example.yongDiary.dao;
 
+import java.util.HashMap;
+import java.util.List;
 import java.util.Optional;
 
 import org.apache.ibatis.session.SqlSession;
 import org.springframework.stereotype.Repository;
 
+import com.example.yongDiary.model.SearchList;
 import com.example.yongDiary.model.Member;
 
 import lombok.RequiredArgsConstructor;
@@ -32,19 +35,64 @@ public class MemberDaoImpl implements MemberDao {
 	            System.out.println("Member found: " + member);
 	        }
 	    } catch (Exception e) {
-	        // Log any exceptions that occur during query execution
 	        System.out.println("Error executing query: " + e.getMessage());
 	        e.printStackTrace(); // Print the stack trace for detailed error information
 	    }
-	    
+	    System.out.println("memberDaoImpl findByMemId member : " + member);
 	    System.out.println("memberDaoImpl findByMemId End@@@@@@@@");
+	    
 	    return member;
 	}
 
-//	@Override
-//	public Member findByMemId(String memId) {
-//		// TODO Auto-generated method stub
-//		return null;
-//	}
+	@Override
+	public int searchInsert(int memNum, String keyword) {
+		 System.out.println("memberDaoImpl findByMemId Start@@@@@@@@");
+		 
+		 int searchInsert = 0;
+		 System.out.println("memberDaoImpl searchInsert searchKeyword Start@@@@@@@@");
+		 int searchKeyword = session.selectOne("keywordTotal", keyword);
+		 System.out.println("memberDaoImpl searchInsert searchKeyword : " + searchKeyword);
+		 HashMap<String, Object> map = new HashMap<>();
+		 map.put("memNum", memNum);
+		 map.put("keyword", keyword);
+		 try {
+			 if(searchKeyword > 0) {
+				 searchInsert = session.update("searchUpdate", keyword);
+				 System.out.println("memberDaoImpl searchInsert searchUpdate : " + searchInsert);
+			 } else {
+				 searchInsert = session.insert("searchInsert", map);
+				 System.out.println("memberDaoImpl searchInsert searchInsert : " + searchInsert);
+			 }
+			 
+		} catch (Exception e) {
+			 System.out.println("memberDaoImpl findByMemId Error : " + e.getMessage());
+		}
+		return searchInsert;
+	}
+
+	@Override
+	public List<SearchList> searchList(SearchList map) {
+		System.out.println("memberDaoImpl searchList Start@@@@@@@@");
+		List<SearchList> searchList = null;
+		try {
+			searchList = session.selectList("searchList", map);
+		} catch (Exception e) {
+			System.out.println("memberDaoImpl searchList Error : " + e.getMessage());
+		}
+		return searchList;
+	}
+
+	@Override
+	public int deleteSearch(String keyword) {
+		System.out.println("memberDaoImpl deleteSearch Start@@@@@@@@");
+		int deleteSearch = 0;
+		try {
+			deleteSearch = session.delete("deleteSearch", keyword);
+		} catch (Exception e) {
+			System.out.println("memberDaoImpl deleteSearch Error : " + e.getMessage());
+		}
+		return deleteSearch;
+	}
+
 
 }

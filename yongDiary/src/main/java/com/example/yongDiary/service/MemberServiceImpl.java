@@ -1,5 +1,6 @@
 package com.example.yongDiary.service;
 
+import java.util.List;
 import java.util.Optional;
 
 import org.springframework.security.core.Authentication;
@@ -8,6 +9,7 @@ import org.springframework.stereotype.Service;
 
 import com.example.yongDiary.dao.MemberDao;
 import com.example.yongDiary.dao.MemberDaoImpl;
+import com.example.yongDiary.model.SearchList;
 import com.example.yongDiary.model.Member;
 
 import lombok.RequiredArgsConstructor;
@@ -16,16 +18,7 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public class MemberServiceImpl implements MemberService {
 	
-	private static MemberDao md;
-
-	@Override
-	public Optional<Member> selectUserById() {
-		//SecurityContextHolder에서 로그인된 아이디 가져오기
-		String memId = getLoggedInId();
-		Member member = md.findByMemId(memId);
-		return Optional.ofNullable(member);
-	}
-
+	private final MemberDao md;
 	@Override
 	public String getLoggedInId() {
 		System.out.println("MemberServiceImpl getLoggedInId Start...");
@@ -41,5 +34,39 @@ public class MemberServiceImpl implements MemberService {
 		//컨트롤러에서 getLoggedInId호출했는데 로그인 안한 경우 발생할 수 있는 문제
 		return "";
 	}
+	
+
+	@Override
+	public Optional<Member> selectUserById() {
+		//SecurityContextHolder에서 로그인된 아이디 가져오기
+		System.out.println("MemberServiceImpl selectUserById Start...");
+		String memId = getLoggedInId();
+		Member member = md.findByMemId(memId);
+		System.out.println("m");
+		return Optional.ofNullable(member);
+	}
+
+	// 검색어 map Insert 
+	@Override
+	public int searchInsert(int memNum, String keyword) {
+		int searchInsert = md.searchInsert(memNum, keyword);
+		return searchInsert;
+	}
+
+	// map 검색어 list 조회
+	@Override
+	public List<SearchList> searchList(SearchList map) {
+		List<SearchList> searchList = md.searchList(map);
+		return searchList;
+	}
+
+	// 검색기록 삭제
+	@Override
+	public int deleteSearch(String keyword) {
+		 int deleteSearch = md.deleteSearch(keyword);
+		return deleteSearch;
+	}
+
+	
 
 }

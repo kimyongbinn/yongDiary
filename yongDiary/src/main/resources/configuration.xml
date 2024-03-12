@@ -8,5 +8,6 @@
 		<typeAlias alias="Member" 			type="com.example.yongDiary.model.Member"/>
 		<typeAlias alias="Diary" 			type="com.example.yongDiary.model.Diary"/>
 		<typeAlias alias="Memo" 			type="com.example.yongDiary.model.Memo"/>
+		<typeAlias alias="SearchList" 		type="com.example.yongDiary.model.SearchList"/>
 	</typeAliases>
 </configuration>

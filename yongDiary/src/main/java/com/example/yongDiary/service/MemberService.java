@@ -1,7 +1,9 @@
 package com.example.yongDiary.service;
 
+import java.util.List;
 import java.util.Optional;
 
+import com.example.yongDiary.model.SearchList;
 import com.example.yongDiary.model.Member;
 
 // 로그인 정보 확인
@@ -13,6 +15,12 @@ public interface MemberService {
 //	Optional<Member> userLogin(Member member);
 
 	public Optional<Member> selectUserById();
+
+	public int searchInsert(int memNum, String keyword);
+
+	public List<SearchList> searchList(SearchList map);
+
+	public int deleteSearch(String keyword);
 
 
 	

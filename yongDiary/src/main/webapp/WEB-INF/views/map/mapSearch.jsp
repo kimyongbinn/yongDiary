@@ -1,22 +1,26 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8"
     pageEncoding="UTF-8"%>
-<!DOCTYPE html>
-<html>
-<head>
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
+<%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
 <meta charset="UTF-8">
-    <script type="text/javascript" src="https://oapi.map.naver.com/openapi/v3/maps.js?ncpClientId=tgsnqirzkh&submodules=geocoder"></script>
+<script type="text/javascript" src="https://oapi.map.naver.com/openapi/v3/maps.js?ncpClientId=tgsnqirzkh&submodules=geocoder"></script>
 <script language="javascript">
+$("#recentSearches").show();
 
 
-
-function getAddrLoc(){
+function getAddrLoc(index){
+	var keyword = $("#searchItem_" + index).val();
 	// 적용예 (api 호출 전에 검색어 체크) 	
+	$("#recentSearches").hide();
 	if (!checkSearchedWord(document.form.keyword)) {
 		return ;
 	}
-	alert(keyword);
+	
+	 if (!$("#keyword").val()) {
+		 $("#keyword").val(keyword);
+	}
 	$.ajax({
-		 url :"/sample/getAddrApi.do"
+		 url :"/map/searchMap"
 		,type:"post"
 		,data:$("#form").serialize()
 		,dataType:"json"
@@ -24,6 +28,9 @@ function getAddrLoc(){
 			$("#list").html("");
 			var errCode = jsonStr.results.common.errorCode;
 			var errDesc = jsonStr.results.common.errorMessage;
+			$("#keyword").val("");
+			$("#recentSearches").hide();
+			
 			if(errCode != "0"){
 				alert(errCode+"="+errDesc);
 			}else{
@@ -37,19 +44,29 @@ function getAddrLoc(){
 	    }
 	});
 }
+
+$("#keyword").click(function() {
+    $("#recentSearches").show();
+});
 function makeListJson(jsonStr){
 	var htmlStr = "";
-	
+	var htmlThead = "";
 	$(jsonStr.results.juso).each(function(){
 		var roadAddr = this.roadAddr;
 		htmlStr += "<tr>";
 		htmlStr += "<td>"+ roadAddr +"/"+ this.jibunAddr+"</td>";
 		htmlStr += "<td>"+this.zipNo+"</td>";
-		htmlStr += "<td><input type='button' value='지도보기' onclick='mapDetail(\""+ roadAddr +"\")'></td>";
+		htmlStr += "<td><input type='button' class='btn btn-primary' value='지도보기' onclick='mapDetail(\""+ roadAddr +"\")'></td>";
 		htmlStr += "</tr>";
+		
+		htmlThead += "<tr>";
+		htmlThead += "<td>도로명/지번</td>";
+		htmlThead += "<td>우펴번호 </td>";
+		htmlThead += "<td>지도보기</td>";
+		htmlThead += "</tr>";
 	});
-
 	$("#list").html(htmlStr);
+	$("#thead").html(htmlStr);
 }
 
 function mapDetail(roadAddr) {
@@ -66,22 +83,16 @@ function mapDetail(roadAddr) {
 	    if (item.roadAddress) {
 	        htmlAddresses.push('[도로명 주소] ' + item.roadAddress);
 	    }
-	
 	    if (item.jibunAddress) {
 	        htmlAddresses.push('[지번 주소] ' + item.jibunAddress);
 	    }
-	
 	    if (item.englishAddress) {
 	        htmlAddresses.push('[영문명 주소] ' + item.englishAddress);
 	    }
-	
-		alert(point);
-		alert(point.x);
 		window.location.href = '/map/mapDetail?roadAddr=' + roadAddr +'&pointX=' + point.x +"&pointY=" + point.y;
     });
    
 }
-
 
 //특수문자, 특정문자열(sql예약어의 앞뒤공백포함) 제거
 function checkSearchedWord(obj){
@@ -93,14 +104,12 @@ function checkSearchedWord(obj){
 			obj.value = obj.value.split(expText).join(""); 
 			return false;
 		}
-		
 		//특정문자열(sql예약어의 앞뒤공백포함) 제거
 		var sqlArray = new Array(
 			//sql 예약어
 			"OR", "SELECT", "INSERT", "DELETE", "UPDATE", "CREATE", "DROP", "EXEC",
              		 "UNION",  "FETCH", "DECLARE", "TRUNCATE" 
 		);
-		
 		var regex;
 		for(var i=0; i<sqlArray.length; i++){
 			regex = new RegExp( sqlArray[i] ,"gi") ;
@@ -122,19 +131,14 @@ function enterSearch(event) {
         getAddrLoc(); 
     } 
 }
-
-
 </script>
-<title>Insert title here</title>
-</head>
 <body>
-<div class="row g-0 justify-content-center">
 	<div class="col-lg-11 wow fadeInUp" data-wow-delay="0.5s">
      	<div class="mb-9" style="text-align: center;">
            <!-- heading -->
            <h2 style="margin-bottom: 15px;">주소 찾기</h2>
            <p style="margin-bottom: 35px;">주소를 검색해보세요!</p>
-       </div>
+        </div>
 		<form name="form" id="form"method="post">
 			<div class="input-group col-md-5 mb-3" style="width:70%; margin: 0 auto;"> 
 				<input type="hidden" name="currentPage" value="1"/> <!-- 요청 변수 설정 (현재 페이지. currentPage : n > 0) -->
@@ -145,26 +149,43 @@ function enterSearch(event) {
 				<div style="margin-left: 10px; width: 65px; margin-top: 6px;">
 					<button type="button" onClick="getAddrLoc();" class="btn bi bi-search rounded"></button>
 				</div>
-				<!-- <input type="button" onClick="getAddrLoc();" value="주소검색하기"/>
- -->
 			</div>
 		</form>
+			<div class="input-group col-md-5 mb-3" style="width:70%; margin: 0 auto;"> 
+				<table class="table" style="text-align: center;" id="recentSearches">
+					<thead>
+						<tr>
+							<td>최근 검색어</td>
+							<td>날짜</td>
+							<td>삭제</td>
+						</tr>
+					</thead>
+					<c:forEach items="${searchList }" var="searchList" varStatus="status">
+						<tr>
+							<td><a href="#" onclick="getAddrLoc('${status.index}'); return false;">${searchList.keyword }</a>
+								<input type="hidden" value="${searchList.keyword }" name="searchItem" id="searchItem_${status.index}"></td>
+							<td><fmt:formatDate pattern="YYYY년MM월dd일" value="${searchList.searchDate }"></fmt:formatDate></td>
+							<td><a href="/map/deleteSearch?keyword=${searchList.keyword }"><i class="bi bi-trash"></i></a></td>
+							
+						</tr>
+						
+					</c:forEach>
+					<tbody>
+						
+					</tbody>
+				</table>
+			</div>
+
 			<table class="table" style="text-align: center;">
-				<thead>
-					<tr>
-						<th>도로명/지번</th>
-						<th>우편번호</th>
-						<th>지도보기</th>
-					</tr>
+				<thead id="thead">
+<!-- 					<tr> -->
+<!-- 						<th>도로명/지번</th> -->
+<!-- 						<th>우편번호</th> -->
+<!-- 						<th>지도보기</th> -->
+<!-- 					</tr> -->
 				</thead>
-				
 				<tbody id="list">
 				</tbody>
-				
 			</table>
-			<!-- <div  class="listTable" id="list" ></div>검색 결과 리스트 출력 영역 -->
-
 	</div>
-</div>
 </body>
-</html>

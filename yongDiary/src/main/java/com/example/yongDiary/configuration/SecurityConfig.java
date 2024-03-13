@@ -81,6 +81,7 @@ public class SecurityConfig {
 		http.authorizeHttpRequests((requests) -> requests
 				//구독서비스
 //				.antMatchers("/mapView").hasAnyRole("ADMIN", "USER")
+				.antMatchers("/map/myMapList").hasAnyRole("ADMIN", "USER")
 				.anyRequest().permitAll()
 			);		
 		

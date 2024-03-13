@@ -10,6 +10,7 @@ import org.springframework.stereotype.Service;
 import com.example.yongDiary.dao.MemberDao;
 import com.example.yongDiary.dao.MemberDaoImpl;
 import com.example.yongDiary.model.SearchList;
+import com.example.yongDiary.model.AddMyMap;
 import com.example.yongDiary.model.Member;
 
 import lombok.RequiredArgsConstructor;
@@ -49,6 +50,7 @@ public class MemberServiceImpl implements MemberService {
 	// 검색어 map Insert 
 	@Override
 	public int searchInsert(int memNum, String keyword) {
+		System.out.println("MemberServiceImpl searchInsert Start...");
 		int searchInsert = md.searchInsert(memNum, keyword);
 		return searchInsert;
 	}
@@ -56,6 +58,7 @@ public class MemberServiceImpl implements MemberService {
 	// map 검색어 list 조회
 	@Override
 	public List<SearchList> searchList(SearchList map) {
+		System.out.println("MemberServiceImpl searchList Start...");
 		List<SearchList> searchList = md.searchList(map);
 		return searchList;
 	}
@@ -63,8 +66,25 @@ public class MemberServiceImpl implements MemberService {
 	// 검색기록 삭제
 	@Override
 	public int deleteSearch(String keyword) {
+		System.out.println("MemberServiceImpl deleteSearch Start...");
 		 int deleteSearch = md.deleteSearch(keyword);
 		return deleteSearch;
+	}
+
+	// 내 장소 추가하기
+	@Override
+	public int insertMap(AddMyMap addMyMap) {
+		System.out.println("MemberServiceImpl insertMap Start...");
+		int insertMap = md.insertMap(addMyMap);
+		return insertMap;
+	}
+
+
+	@Override
+	public List<AddMyMap> myMapList(AddMyMap addMyMap) {
+		System.out.println("MemberServiceImpl myMapList Start...");
+		List<AddMyMap> myMapList = md.myMapList(addMyMap);
+		return myMapList;
 	}
 
 	

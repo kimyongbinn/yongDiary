@@ -4,6 +4,7 @@ import java.util.List;
 import java.util.Optional;
 
 import com.example.yongDiary.model.SearchList;
+import com.example.yongDiary.model.AddMyMap;
 import com.example.yongDiary.model.Member;
 
 // 로그인 정보 확인
@@ -21,6 +22,10 @@ public interface MemberService {
 	public List<SearchList> searchList(SearchList map);
 
 	public int deleteSearch(String keyword);
+
+	public int insertMap(AddMyMap addMyMap);
+
+	public List<AddMyMap> myMapList(AddMyMap addMyMap);
 
 
 	

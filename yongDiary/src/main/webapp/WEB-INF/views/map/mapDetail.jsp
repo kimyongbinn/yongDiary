@@ -8,14 +8,29 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0, user-scalable=no">
 <title>지도 검색</title>
 </head>
+<script type="text/javascript">
+	function addMapPop() {
+		var popupW = 600;
+		var popupH = 500;
+		var left = Math.ceil((window.screen.width - popupW)/2);
+		var top = Math.ceil((window.screen.height - popupH)/2);
+	
+		var url = "/popup/addMapPopup?roadAddr=${roadAddr}";
+        var name = "addMyMap";
+        
+        window.open(url, name, 'width='+popupW+',height='+popupH+',left='+left+',top='+top)
+	}
+</script>
 <body>
 	<div class="col-lg-11 wow fadeInUp" data-wow-delay="0.5s">
      	<div class="mb-9" style="text-align: center;">
            <!-- heading -->
            <p style="margin-bottom: 15px;">${roadAddr }</p>
-           <button type="button" class="btn btn-primary" style="margin-bottom: 35px;"><a href="javascript:history.back()">목록</a></button>
+           <div id="map" style="height:500px; margin-bottom: 15px;"></div>
+           <button type="button" class="btn btn-primary" style="margin-bottom: 35px;"><a href="javascript:history.back(${keyword })" style="color: white">목록</a></button>
+           <button type="button" class="btn btn-primary" style="margin-bottom: 35px;" onclick="addMapPop()">내 지도 추가</button>
         </div>
-		<div id="map" style="height:500px;"></div>
+		
 	</div>
 <script type="text/javascript" src="https://oapi.map.naver.com/openapi/v3/maps.js?ncpClientId=tgsnqirzkh"></script>
 <script>
@@ -43,7 +58,16 @@ if (!isNaN(pointX) && !isNaN(pointY)) {
     ].join('');
     
     var infowindow = new naver.maps.InfoWindow({
-        content: contentString
+        content: contentString,
+        maxWidth: 250,
+        backgroundColor: "white",
+        borderColor: "#AB7442",
+        margin: 15,
+        borderWidth: 5,
+        anchorSize: new naver.maps.Size(30, 30),
+        anchorSkew: true,
+        anchorColor: "white",
+        pixelOffset: new naver.maps.Point(20, -20)
     });
     infowindow.open(map, marker);
    

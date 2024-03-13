@@ -9,5 +9,7 @@
 		<typeAlias alias="Diary" 			type="com.example.yongDiary.model.Diary"/>
 		<typeAlias alias="Memo" 			type="com.example.yongDiary.model.Memo"/>
 		<typeAlias alias="SearchList" 		type="com.example.yongDiary.model.SearchList"/>
+		<typeAlias alias="AddMyMap" 		type="com.example.yongDiary.model.AddMyMap"/>
+		<typeAlias alias="PlaceMemo" 		type="com.example.yongDiary.model.PlaceMemo"/>
 	</typeAliases>
 </configuration>

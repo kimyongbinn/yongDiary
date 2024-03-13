@@ -25,13 +25,13 @@
 			INSERT INTO SearchList values(#{memNum}, #{keyword}, sysdate, 0)
 		</insert>
 		
-	<update id="searchUpdate" parameterType="String">
-	    UPDATE SearchList
-	    SET searchDate = sysdate,
-	        delState = CASE WHEN delState = 1 THEN 0 ELSE delState END
-	    WHERE keyword = #{keyword}
-	</update>
-		
+		<update id="searchUpdate" parameterType="String">
+		    UPDATE SearchList
+		    SET searchDate = sysdate,
+		        delState = CASE WHEN delState = 1 THEN 0 ELSE delState END
+		    WHERE keyword = #{keyword}
+		</update>
+			
 		<select id="searchList" resultType="SearchList">
 			SELECT *
 			FROM SearchList
@@ -44,5 +44,15 @@
 			SET    delState = 1
 			WHERE  keyword = #{keyword}
 		</update>
-	
+		
+		<insert id="insertMap" parameterType="AddMyMap">
+			INSERT into addMyMap
+			Values(placeNum_seq.nextval, #{memNum}, #{placeName}, sysdate, 0)
+		</insert>
+		
+		
+		<select id="myMapList" resultType="AddMyMap">
+			SELECT *
+			FROM AddMyMap
+		</select>
 	</mapper>

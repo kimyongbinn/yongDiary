@@ -6,12 +6,10 @@
 <script type="text/javascript" src="https://oapi.map.naver.com/openapi/v3/maps.js?ncpClientId=tgsnqirzkh&submodules=geocoder"></script>
 <script language="javascript">
 $("#recentSearches").show();
-
-
 function getAddrLoc(index){
 	var keyword = $("#searchItem_" + index).val();
 	// 적용예 (api 호출 전에 검색어 체크) 	
-	$("#recentSearches").hide();
+	
 	if (!checkSearchedWord(document.form.keyword)) {
 		return ;
 	}
@@ -29,10 +27,20 @@ function getAddrLoc(index){
 			var errCode = jsonStr.results.common.errorCode;
 			var errDesc = jsonStr.results.common.errorMessage;
 			$("#keyword").val("");
-			$("#recentSearches").hide();
-			
+			// 검색 api 실행 후 검색 창 누르면 최근검색어 나옴
+			$(document).ready(function() {
+			    $("#keyword").click(function(event) {
+			        $("#recentSearches").show();
+			    });
+			    $(document).click(function(event) {
+			        if (!$(event.target).closest('#keyword').length) {
+			            $("#recentSearches").hide();
+			        }
+			    });
+			});
 			if(errCode != "0"){
 				alert(errCode+"="+errDesc);
+				$("#recentSearches").show();
 			}else{
 				if(jsonStr != null){
 					makeListJson(jsonStr);
@@ -41,32 +49,35 @@ function getAddrLoc(index){
 		}
 	    ,error: function(xhr,status, error){
 	    	alert("에러발생");
+	    	$("#recentSearches").show();
 	    }
-	});
+	});	
 }
 
-$("#keyword").click(function() {
-    $("#recentSearches").show();
-});
+
 function makeListJson(jsonStr){
 	var htmlStr = "";
 	var htmlThead = "";
+	alert(jsonStr);
+	
+	htmlThead += "<tr>";
+	htmlThead += "<td>도로명/지번</td>";
+	htmlThead += "<td>우펴번호 </td>";
+	htmlThead += "<td>지도보기</td>";
+	htmlThead += "</tr>";
 	$(jsonStr.results.juso).each(function(){
 		var roadAddr = this.roadAddr;
+		var zipNo = this.zipNo;
 		htmlStr += "<tr>";
 		htmlStr += "<td>"+ roadAddr +"/"+ this.jibunAddr+"</td>";
 		htmlStr += "<td>"+this.zipNo+"</td>";
 		htmlStr += "<td><input type='button' class='btn btn-primary' value='지도보기' onclick='mapDetail(\""+ roadAddr +"\")'></td>";
 		htmlStr += "</tr>";
 		
-		htmlThead += "<tr>";
-		htmlThead += "<td>도로명/지번</td>";
-		htmlThead += "<td>우펴번호 </td>";
-		htmlThead += "<td>지도보기</td>";
-		htmlThead += "</tr>";
 	});
+	
 	$("#list").html(htmlStr);
-	$("#thead").html(htmlStr);
+	$("#thead1").html(htmlThead);
 }
 
 function mapDetail(roadAddr) {
@@ -79,7 +90,6 @@ function mapDetail(roadAddr) {
         var htmlAddresses = [],
         item = response.v2.addresses[0],
         point = new naver.maps.Point(item.x, item.y);
-
 	    if (item.roadAddress) {
 	        htmlAddresses.push('[도로명 주소] ' + item.roadAddress);
 	    }
@@ -137,7 +147,8 @@ function enterSearch(event) {
      	<div class="mb-9" style="text-align: center;">
            <!-- heading -->
            <h2 style="margin-bottom: 15px;">주소 찾기</h2>
-           <p style="margin-bottom: 35px;">주소를 검색해보세요!</p>
+           <p style="margin-bottom: 35px;">주소를 검색해보세요!${memNum }</p>
+           
         </div>
 		<form name="form" id="form"method="post">
 			<div class="input-group col-md-5 mb-3" style="width:70%; margin: 0 auto;"> 
@@ -160,24 +171,23 @@ function enterSearch(event) {
 							<td>삭제</td>
 						</tr>
 					</thead>
-					<c:forEach items="${searchList }" var="searchList" varStatus="status">
-						<tr>
-							<td><a href="#" onclick="getAddrLoc('${status.index}'); return false;">${searchList.keyword }</a>
-								<input type="hidden" value="${searchList.keyword }" name="searchItem" id="searchItem_${status.index}"></td>
-							<td><fmt:formatDate pattern="YYYY년MM월dd일" value="${searchList.searchDate }"></fmt:formatDate></td>
-							<td><a href="/map/deleteSearch?keyword=${searchList.keyword }"><i class="bi bi-trash"></i></a></td>
-							
-						</tr>
-						
-					</c:forEach>
+					
 					<tbody>
-						
+						<c:forEach items="${searchList }" var="searchList" varStatus="status" step="1" end="4">
+							<tr>
+								<td><a href="#" onclick="getAddrLoc('${status.index}'); return false;">${searchList.keyword }</a>
+									<input type="hidden" value="${searchList.keyword }" name="searchItem" id="searchItem_${status.index}"></td>
+								<td><fmt:formatDate pattern="YYYY년MM월dd일" value="${searchList.searchDate }"></fmt:formatDate></td>
+								<td><a href="/map/deleteSearch?keyword=${searchList.keyword }"><i class="bi bi-trash"></i></a></td>
+								
+							</tr>
+						</c:forEach>
 					</tbody>
 				</table>
 			</div>
 
 			<table class="table" style="text-align: center;">
-				<thead id="thead">
+				<thead id="thead1">
 <!-- 					<tr> -->
 <!-- 						<th>도로명/지번</th> -->
 <!-- 						<th>우편번호</th> -->

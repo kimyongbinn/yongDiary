@@ -1,6 +1,8 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8"
     pageEncoding="UTF-8"%>
-
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
+<%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
+<%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
 <!DOCTYPE html>
 <html lang="en">
 <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
@@ -10,9 +12,7 @@
     <meta content="width=device-width, initial-scale=1.0" name="viewport">
     <meta content="" name="keywords">
     <meta content="" name="description">
-<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
-<%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
-<%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
+
     <!-- Favicon -->
     <link href="assets/img/favicon.ico" rel="icon">
 
@@ -99,10 +99,10 @@
             <div class="navbar-nav ms-auto p-4 p-lg-0">
                 <a href="/" class="nav-item nav-link">Home</a>
                 <div class="nav-item dropdown">
-                    <a href="#" class="nav-link dropdown-toggle" data-bs-toggle="dropdown">Menu</a>
+                    <a href="#" class="nav-link dropdown-toggle" data-bs-toggle="dropdown">Map</a>
                     <div class="dropdown-menu fade-up m-0">
                         <a href="/map/mapSearch" class="dropdown-item">Map</a>
-                        <a href="quote.html" class="dropdown-item">Diary</a>
+                        <a href="/map/myMapList" class="dropdown-item">myMap</a>
 <!--                         <a href="team.html" class="dropdown-item">Our Team</a> -->
 <!--                         <a href="testimonial.html" class="dropdown-item">Testimonial</a> -->
                         <a href="404.html" class="dropdown-item">404 Page</a>

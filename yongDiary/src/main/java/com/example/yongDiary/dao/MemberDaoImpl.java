@@ -8,6 +8,7 @@ import org.apache.ibatis.session.SqlSession;
 import org.springframework.stereotype.Repository;
 
 import com.example.yongDiary.model.SearchList;
+import com.example.yongDiary.model.AddMyMap;
 import com.example.yongDiary.model.Member;
 
 import lombok.RequiredArgsConstructor;
@@ -94,5 +95,30 @@ public class MemberDaoImpl implements MemberDao {
 		return deleteSearch;
 	}
 
+	@Override
+	public int insertMap(AddMyMap addMyMap) {
+		System.out.println("memberDaoImpl insertMap Start@@@@@@@@");
+		int insertMap = 0;
+		try {
+			insertMap = session.insert("insertMap", addMyMap);
+		} catch (Exception e) {
+			System.out.println("memberDaoImpl insertMap Error : " + e.getMessage());
+		}
+		return insertMap;
+	}
+
+	@Override
+	public List<AddMyMap> myMapList(AddMyMap addMyMap) {
+		System.out.println("memberDaoImpl myMapList Start@@@@@@@@");
+		List<AddMyMap> myMapList = null;
+		try {
+			myMapList = session.selectList("myMapList", addMyMap);
+		} catch (Exception e) {
+			System.out.println("memberDaoImpl myMapList Error : " + e.getMessage());
+		}
+		return myMapList;
+	}
+
 
 }
+

@@ -6,15 +6,25 @@
     <definition name="mainTemplate" template="/WEB-INF/layout/layout-basic.jsp">
         <put-attribute name="header" value="/WEB-INF/common/header.jsp"/>
         <put-attribute name="footer" value="/WEB-INF/common/footer.jsp"/>
-        <put-attribute name="body" value=""/>
+        <put-attribute name="body" value="" />
         <!-- name > top, content, footer 등의 name 설정 -->
         <!-- value > 영역에 연결될 실제 view 파일 -->
     </definition>
-
     <!-- view 설정 -->
     <definition name="*/*" extends="mainTemplate">
-        <put-attribute name="body" value="/WEB-INF/views/{1}/{2}.jsp" />
+         <put-attribute name="body" value="/WEB-INF/views/{1}/{2}.jsp" />
     </definition>
+    
+    <definition name="popupTemplate" template="/WEB-INF/layout/layout-popup.jsp">
+        <put-attribute name="header1" value="/WEB-INF/common/popupHeader.jsp"/>
+         <put-attribute name="body1" value=""/>
+        <put-attribute name="footer1" value="/WEB-INF/common/popupFooter.jsp"/>
+    </definition>
+    <definition name="*/popup/*" extends="popupTemplate">
+         <put-attribute name="body1" value="/WEB-INF/views/{1}/popup/{2}.jsp" />
+    </definition>
+
+    
     <!-- name > controller에서 response할 뷰의 이름, extends > 위에서 정의한 템플릿 이름 넣어줌 -->
     <!-- index라는 이름으로 view 실행하면 연결한 구조대로 실행 -->
 </tiles-definitions>

@@ -9,6 +9,12 @@
 <title>지도 검색</title>
 </head>
 <script type="text/javascript">
+if (window.history.replaceState) {
+    window.history.replaceState(null, null, window.location.href);
+}
+
+
+
 	function addMapPop() {
 		var popupW = 600;
 		var popupH = 500;
@@ -20,6 +26,11 @@
         
         window.open(url, name, 'width='+popupW+',height='+popupH+',left='+left+',top='+top)
 	}
+	window.addEventListener('load', function() {
+	    if (window.history.replaceState) {
+	        window.history.replaceState(null, null, window.location.href);
+	    }
+	});
 </script>
 <body>
 	<div class="col-lg-11 wow fadeInUp" data-wow-delay="0.5s">

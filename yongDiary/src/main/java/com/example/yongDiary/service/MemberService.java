@@ -28,5 +28,6 @@ public interface MemberService {
 	public List<AddMyMap> myMapList(AddMyMap addMyMap);
 
 
+
 	
 }

@@ -25,6 +25,10 @@
 			INSERT INTO SearchList values(#{memNum}, #{keyword}, sysdate, 0)
 		</insert>
 		
+		<insert id="insertTest" parameterType="map">
+			INSERT INTO SearchList values(#{memNum}, #{roadAddr}, sysdate, 0)
+		</insert>
+		
 		<update id="searchUpdate" parameterType="String">
 		    UPDATE SearchList
 		    SET searchDate = sysdate,

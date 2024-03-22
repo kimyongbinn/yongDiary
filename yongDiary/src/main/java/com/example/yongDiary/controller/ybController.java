@@ -39,19 +39,26 @@ public class ybController {
 	private final DiaryService  ds;
 	private final MemberDao md;
 	
-	public Member aboutMem() {
+	public Member aboutMem(Model model) {
 		Optional<Member> memberOptional = ms.selectUserById();
 		Member member = null;
 		if(memberOptional.isPresent()) {
 			member = memberOptional.get();
 			System.out.println("YbController about LoginMember : " + member);
+			
+			model.addAttribute("member", member);
 		}
 		return member;
 	}
 	
 	@RequestMapping("/")
-	public ModelAndView main(ModelAndView mv) {
+	public ModelAndView main(ModelAndView mv, Member member, Model model) {
 		System.out.println("YbController main start..");
+		
+		if(member != null) {
+			aboutMem(model);
+		}
+		
 		
 		mv.setViewName("main/main");
 		return mv;
@@ -98,29 +105,27 @@ public class ybController {
     		SearchList map, Model modell) throws Exception {
 		
 		// 로그인한 정보
-		Member member = aboutMem();
+		Member member = aboutMem(modell);
 		int memNum = member.getMemNum();
 		
-		System.out.println("aboutMem : " + aboutMem());
+		System.out.println("aboutMem : " + aboutMem(modell));
 		// 요청변수 설정
         String currentPage = req.getParameter("currentPage");    //요청 변수 설정 (현재 페이지. currentPage : n > 0)
 		String countPerPage = req.getParameter("countPerPage");  //요청 변수 설정 (페이지당 출력 개수. countPerPage 범위 : 0 < n <= 100)
 		String resultType = req.getParameter("resultType");      //요청 변수 설정 (검색결과형식 설정, json)
 		String confmKey = req.getParameter("confmKey");          //요청 변수 설정 (승인키)
 		String keyword = req.getParameter("keyword");            //요청 변수 설정 (키워드)
+		String firstSort = req.getParameter("firstSort");		 //요청 변수 설정 (정렬)
 		System.out.println("keyword : " + keyword);
 		int totalcnt = req.getContentLength();
-		System.out.println("totalcnt -> " + totalcnt);
 		// 최근검색어 추가
-		
-		Paging page = new Paging(totalcnt, currentPage);
-		
 		if(keyword == null || !keyword.equals("")) { 
 			System.out.println("YbController searchInsert start..");
 			int searchInsert = ms.searchInsert(memNum, keyword);
 		}
 		// OPEN API 호출 URL 정보 설정
-		String apiUrl = "https://business.juso.go.kr/addrlink/addrLinkApi.do?currentPage="+currentPage+"&countPerPage="+countPerPage+"&keyword="+URLEncoder.encode(keyword,"UTF-8")+"&confmKey="+confmKey+"&resultType="+resultType;
+		String apiUrl = "https://business.juso.go.kr/addrlink/addrLinkApi.do?currentPage="+currentPage+"&countPerPage="+countPerPage+"&keyword="+URLEncoder.encode(keyword,"UTF-8")+
+				"&confmKey="+confmKey+"&resultType="+resultType+"&firstSort="+firstSort;
 		URL url = new URL(apiUrl);
     	BufferedReader br = new BufferedReader(new InputStreamReader(url.openStream(),"UTF-8"));
     	StringBuffer sb = new StringBuffer();
@@ -135,37 +140,36 @@ public class ybController {
     	response.setCharacterEncoding("UTF-8");
 		response.setContentType("text/xml");
 		response.getWriter().write(sb.toString());			// 응답결과 반환
-		modell.addAttribute("memNum", memNum);
-		modell.addAttribute("keyword", keyword);
-		modell.addAttribute("page", page);
     }
 	// 최근검색어 리스트
 	@RequestMapping(value = "/map/mapSearch")
-	public String mapSearch(Model model, SearchList map, Member member) {	
+	public String mapSearch(Model modell, SearchList map, Member member) throws Exception {	
 		System.out.println("ybController mapSearch start...");
-		
 		
 		List<SearchList> searchList = ms.searchList(map);
 		System.out.println("ybController mapSearch searchList : " + searchList);
-		model.addAttribute("searchList", searchList);
+		modell.addAttribute("searchList", searchList);
 		return "map/mapSearch";
 	}
 	// 지도 검색 상세페이지
-	@RequestMapping(value = "/map/mapDetail")
-	public String mapResult(Model model, String pointX, String pointY, String roadAddr, String keyword) {	
-		System.out.println("ybController mapResult start...");
-		System.out.println("pointX -> " + pointX);
-		System.out.println("pointy -> " + pointY);
-		System.out.println("roadAddr -> " + roadAddr);
-		System.out.println("keyword -> " + keyword);
-		
-		model.addAttribute("pointX", pointX);
-		model.addAttribute("pointY", pointY);
-		model.addAttribute("roadAddr", roadAddr);
-		model.addAttribute("keyword", keyword);
-		
-		return "map/mapDetail";
-	}
+		@RequestMapping(value = "/map/mapDetail")
+		public String mapResult(Model model, String pointX, String pointY, String roadAddr, String keyword) {	
+			System.out.println("ybController mapResult start...");
+			System.out.println("pointX -> " + pointX);
+			System.out.println("pointy -> " + pointY);
+			System.out.println("roadAddr -> " + roadAddr);
+			System.out.println("keyword -> " + keyword);
+			Member member = aboutMem(model);
+			int memNum = member.getMemNum();
+			
+			
+			model.addAttribute("pointX", pointX);
+			model.addAttribute("pointY", pointY);
+			model.addAttribute("roadAddr", roadAddr);
+			model.addAttribute("keyword", keyword);
+			
+			return "map/mapDetail";
+		}
 	// 지도 최근검색어 삭제
 	@RequestMapping(value = "/map/deleteSearch")
 	public String deleteSearch(Model model, String keyword) {	
@@ -191,7 +195,7 @@ public class ybController {
 	public String addMyMap(Model model, String roadAddr, AddMyMap addMyMap) {	
 		System.out.println("ybController addMyMap start...");
 		System.out.println("ybController addMyMap roadAddr : " + roadAddr);	
-		Member member = aboutMem();
+		Member member = aboutMem(model);
 		int memNum = member.getMemNum();
 		
 		addMyMap.setMemNum(memNum);
@@ -213,5 +217,15 @@ public class ybController {
 		
 		model.addAttribute("myMapList", myMapList);
 		return "map/myMapList";
+	}
+	
+	// chatting
+	@RequestMapping(value = "/chating")
+	public ModelAndView chatting() {
+		System.out.println("ybController chatting Start...");
+		ModelAndView mv = new ModelAndView();
+		mv.setViewName("page/chatView");
+		
+		return mv;
 	}
 }

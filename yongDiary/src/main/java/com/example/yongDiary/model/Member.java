@@ -2,7 +2,7 @@ package com.example.yongDiary.model;
 
 import java.util.Date;
 
-import com.example.yongDiary.configuration.filter.Role;
+//import com.example.yongDiary.configuration.filter.Role;
 
 import lombok.AccessLevel;
 import lombok.Builder;
@@ -26,6 +26,6 @@ public class Member {
 	private String	memImage;	// 이미지
 	private String	memNick;	// 닉네임
 	
-	private Role role;
+//	private Role role;
 	
 }

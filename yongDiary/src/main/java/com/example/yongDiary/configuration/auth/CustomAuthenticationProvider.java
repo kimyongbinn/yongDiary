@@ -35,7 +35,7 @@ public class CustomAuthenticationProvider implements AuthenticationProvider {
 		UUID transactionId = UUID.randomUUID();
 		String memId = "";
 		String memPw = "";
-		List<GrantedAuthority> authorities = new ArrayList<>();
+//		List<GrantedAuthority> authorities = new ArrayList<>();
 		try {
 			log.info("[{}]{}:{}",transactionId, "AuthenticationProvider", "start");
 			memId = authentication.getName();//아이디
@@ -62,19 +62,19 @@ public class CustomAuthenticationProvider implements AuthenticationProvider {
             }
 
             // category에 따라 권한 부여
-            switch (member.getMemAdmin()) {
-                case 1:
-                    authorities.add(new SimpleGrantedAuthority("ROLE_USER"));
-                    break;
-                case 2:
-                    authorities.add(new SimpleGrantedAuthority("ROLE_ADMIN"));
-                    break;
-                default:
-                    throw new BadCredentialsException("유효하지 않은 카테고리 값: " + member.getMemAdmin());
-            
-            }
-            
-            log.info("authorities:{}", authorities);
+//            switch (member.getMemAdmin()) {
+//                case 1:
+//                    authorities.add(new SimpleGrantedAuthority("ROLE_USER"));
+//                    break;
+//                case 2:
+//                    authorities.add(new SimpleGrantedAuthority("ROLE_ADMIN"));
+//                    break;
+//                default:
+//                    throw new BadCredentialsException("유효하지 않은 카테고리 값: " + member.getMemAdmin());
+//            
+//            }
+//            
+//            log.info("authorities:{}", authorities);
             
 		} catch (Exception e) {
 			
@@ -87,7 +87,8 @@ public class CustomAuthenticationProvider implements AuthenticationProvider {
 		// 로그인 성공 -> SecurityContextHolder에 Authentication 객체 저장
 		// => SecurityContextHolder(SecurityContext(Authentication))
 		//SecurityContextHolder.getContext().getAuthentication()로 Authentication 호출가능
-    	return new UsernamePasswordAuthenticationToken(memId,  memPw, authorities);
+//    	return new UsernamePasswordAuthenticationToken(memId,  memPw, authorities);
+		return new UsernamePasswordAuthenticationToken(memId,  memPw);
     }
 
 	// Provider 적용 가능 여부

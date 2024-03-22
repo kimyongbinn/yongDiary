@@ -8,18 +8,86 @@
 <head>
 <meta charset="UTF-8">
 <title>Insert title here</title>
+<script type="text/javascript" src="https://oapi.map.naver.com/openapi/v3/maps.js?ncpClientId=tgsnqirzkh&submodules=geocoder"></script>
 <script type="text/javascript">
-	var placeName = $("#placeName_" + index).val();
+// 	var placeName = $("#placeName_" + index).val();
 	
-	$.ajax({
-		 url :"/map/myMapDetail"
-		,type: "post"
-		,data:placeName
-		,dataType:"json"
-		,success:function(jsonStr) {
+// 	$.ajax({
+// 		 url :"/map/myMapDetail"
+// 		,type: "post"
+// 		,data:placeName
+// 		,dataType:"json"
+// 		,success:function(jsonStr) {
 			
-		}
-	})
+// 		}
+// 	})
+	
+	var pointX = null;
+	var pointY = null;
+	function showMap(roadAddr) {
+    // Assuming you want to navigate to another page using the roadAddr parameter
+    // Replace 'target_page.html' with your target page URL
+        naver.maps.Service.geocode({
+        query: roadAddr
+        
+    }, function(status, response) {
+        var htmlAddresses = [],
+        item = response.v2.addresses[0],
+        point = new naver.maps.Point(item.x, item.y);
+	    if (item.roadAddress) {
+	        htmlAddresses.push('[도로명 주소] ' + item.roadAddress);
+	    }
+	    if (item.jibunAddress) {
+	        htmlAddresses.push('[지번 주소] ' + item.jibunAddress);
+	    }
+	    if (item.englishAddress) {
+	        htmlAddresses.push('[영문명 주소] ' + item.englishAddress);
+	    }
+// 		window.location.href = '/map/mapDetail?roadAddr=' + roadAddr +'&pointX=' + point.x +"&pointY=" + point.y;
+	pointX = point.x;
+	pointY = point.y;
+    });
+   
+}
+
+	if (!isNaN(pointX) && !isNaN(pointY)) {
+	    var centerCoordinate = new naver.maps.LatLng(pointY, pointX); 
+	    
+	    var map = new naver.maps.Map('map', {
+	        center: centerCoordinate,
+	        zoom: 15
+	    });
+	    
+	    var marker = new naver.maps.Marker({
+	        position: centerCoordinate,
+	        map: map
+	    });
+	    
+	    var address = "${roadAddr}";
+	    var contentString = [
+	        '<div class="form-floating">',
+	        ' ' + address + ' ',
+	        '</div>'
+	    ].join('');
+	    
+	    var infowindow = new naver.maps.InfoWindow({
+	        content: contentString,
+	        maxWidth: 250,
+	        backgroundColor: "white",
+	        borderColor: "#AB7442",
+	        margin: 15,
+	        borderWidth: 5,
+	        anchorSize: new naver.maps.Size(30, 30),
+	        anchorSkew: true,
+	        anchorColor: "white",
+	        pixelOffset: new naver.maps.Point(20, -20)
+	    });
+	    infowindow.open(map, marker);
+	   
+	} else {
+	    console.error('Invalid coordinates: pointX=', pointX, ', pointY=', pointY);
+	}
+	
 </script>
 </head>
 <body>
@@ -52,17 +120,18 @@
 					</thead>
 					
 					<tbody>
-						<c:forEach items="${myMapList }" var="myMapList" varStatus="status" step="1" end="4">
+						<c:forEach items="${myMapList }" var="myMapList" varStatus="status">
 							<tr>
 								<td><a href="#" onclick="getAddrLoc('${status.index}'); return false;">${myMapList.placeName }</a>
 								<td><fmt:formatDate pattern="YYYY년MM월dd일" value="${myMapList.addDate }"></fmt:formatDate></td>
-								<td><a href="/map/deleteSearch?keyword=${searchList.keyword }"><i class="bi bi-map"></i></a></td>
+								<td><a href="#" onclick="showMap('${status.index}')"><i class="bi bi-map"></i></a></td>
 							</tr>
 						</c:forEach>
 					</tbody>
 				</table>
 			</div>
 	</div>
+	<div id="map" style="height:500px; margin-bottom: 15px;"></div>
  <script type="text/javascript" src="https://oapi.map.naver.com/openapi/v3/maps.js?ncpClientId=tgsnqirzkh"></script>
 <script>
 var pointX = "${pointX}";

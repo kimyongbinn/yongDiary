@@ -35,11 +35,20 @@
 
     <!-- Template Stylesheet -->
     <link href="/assets/css/style.css" rel="stylesheet">
-    
+   	<style type="text/css">
+	
+	   	
+ 	   	html, body{height: 100%} 
+	    #wrapper{
+	        height:auto;
+ 	        min-height: 100%; 
+	        padding-bottom: 200px;
+		}
+   	</style> 
     
 </head>
-
 <body>
+<div id="wrapper">
     <!-- Spinner Start -->
     <div id="spinner" class="show bg-white position-fixed translate-middle w-100 vh-100 top-50 start-50 d-flex align-items-center justify-content-center">
         <div class="spinner-grow text-primary" style="width: 3rem; height: 3rem;" role="status">
@@ -70,11 +79,11 @@
                 <div class="h-100 d-inline-flex align-items-center">
                 <c:set var="authentication" value="${pageContext.request.userPrincipal}" />
            	 	  <c:choose>
-	           	 	  <c:when test="${empty authentication or not authentication.authenticated}">
+	           	 	  <c:when test="${empty member}">
                     	  <a class="btn btn-sm-square bg-white text-primary me-1" href="/user/loginPage"><i class="bi bi-door-open"></i></a>
                    	  </c:when>
                    	  <c:otherwise>
-                   	      <h6 class="mb-0" style="margin-right: 15px;">${pageContext.request.userPrincipal.name}</h6>
+                   	      <h6 class="mb-0" style="margin-right: 15px;">${member.memId}</h6>
                     	  <a class="btn btn-sm-square bg-white text-primary me-1" href="/logout"><i class="bi bi-door-closed"></i></a>
                       </c:otherwise>
                    </c:choose>
@@ -90,7 +99,10 @@
     <!-- Navbar Start -->
     <nav class="navbar navbar-expand-lg bg-white navbar-light sticky-top p-0">
         <a href="/" class="navbar-brand d-flex align-items-center px-4 px-lg-5">
-            <h2 class="m-0 text-primary">YongDiary</h2>
+            <h2 class="m-0" style="color: #04ef09;">오</h2>
+            <h5 class="m-0">늘의</h5>
+            <h2 class="m-0" style="color: #04ef09;">이</h2>
+         	<h5 class="m-0">웃</h5>
         </a>
         <button type="button" class="navbar-toggler me-4" data-bs-toggle="collapse" data-bs-target="#navbarCollapse">
             <span class="navbar-toggler-icon"></span>
@@ -108,10 +120,20 @@
                         <a href="404.html" class="dropdown-item">404 Page</a>
                     </div>
                 </div>
+                <div class="nav-item dropdown">
+                    <a href="#" class="nav-link dropdown-toggle" data-bs-toggle="dropdown">Chatting</a>
+                    <div class="dropdown-menu fade-up m-0">
+                        <a href="/chating" class="dropdown-item">Chat</a>
+                        <a href="/map/myMapList" class="dropdown-item">myMap</a>
+<!--                         <a href="team.html" class="dropdown-item">Our Team</a> -->
+<!--                         <a href="testimonial.html" class="dropdown-item">Testimonial</a> -->
+                        <a href="404.html" class="dropdown-item">404 Page</a>
+                    </div>
+                </div>
                 <a href="contact.html" class="nav-item nav-link">Contact</a>
             </div>
             <a href="" class="btn btn-primary py-4 px-lg-5 d-none d-lg-block">Show Calendar<i class="fa fa-arrow-right ms-3"></i></a>
         </div>
     </nav>
     <!-- Navbar End -->
-<div class="row g-0 justify-content-center">
+<div class="row g-0 justify-content-center" id="">

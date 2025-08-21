@@ -11,6 +11,7 @@ bootJar {
 
 bootWar {
 	enabled = true   // WAR 빌드 활성화
+	archiveFileName = 'yongDiary.war'
 }
 
 group = 'com.yongCoding'

@@ -3,18 +3,13 @@
 
 #Oracle Connect
 spring:
-#  datasource:
-#    driver-class-name: oracle.jdbc.driver.OracleDriver
-#    url: jdbc:oracle:thin:@localhost:1521/xe
-#    username: yongDiary
-#    password: tiger
-
-  autoconfigure:
-    exclude:
-      - org.springframework.boot.autoconfigure.jdbc.DataSourceAutoConfiguration
-      - org.springframework.boot.autoconfigure.orm.jpa.HibernateJpaAutoConfiguration
-      - org.springframework.boot.autoconfigure.data.jpa.JpaRepositoriesAutoConfiguration
-      - org.springframework.boot.autoconfigure.mail.MailSenderAutoConfiguration
+  datasource:
+    driver-class-name: oracle.jdbc.driver.OracleDriver
+    url: jdbc:oracle:thin:@localhost:1521/xe
+    username: yongDiary
+    password: tiger
+    hikari:
+      initialization-fail-timeout: -1  # Oracle 미설치 시에도 앱 시작 허용
 
   #File Size
   servlet:
@@ -25,10 +20,13 @@ spring:
   #JPA Setting
   jpa:
     show-sql: true
-
-    #Operation -> Create / None
+    database-platform: org.hibernate.dialect.Oracle12cDialect
     hibernate:
       ddl-auto: none
+    properties:
+      hibernate:
+        temp:
+          use_jdbc_metadata_defaults: false  # 시작 시 DB 접속 없이 방언 설정
   
   #View Resolver      
   mvc:
